@@ -1,0 +1,13 @@
+C:\Users\caduv\source\repos\EU4MapPainter\EU4MapPainter\bin\Debug\EU4MapPainter.exe.config
+C:\Users\caduv\source\repos\EU4MapPainter\EU4MapPainter\bin\Debug\EU4MapPainter.exe
+C:\Users\caduv\source\repos\EU4MapPainter\EU4MapPainter\bin\Debug\EU4MapPainter.pdb
+C:\Users\caduv\source\repos\EU4MapPainter\EU4MapPainter\obj\Debug\EU4MapPainter.csprojAssemblyReference.cache
+C:\Users\caduv\source\repos\EU4MapPainter\EU4MapPainter\obj\Debug\EU4MapPainter.Properties.Resources.resources
+C:\Users\caduv\source\repos\EU4MapPainter\EU4MapPainter\obj\Debug\EU4MapPainter.csproj.GenerateResource.cache
+C:\Users\caduv\source\repos\EU4MapPainter\EU4MapPainter\obj\Debug\EU4MapPainter.csproj.CoreCompileInputs.cache
+C:\Users\caduv\source\repos\EU4MapPainter\EU4MapPainter\obj\Debug\EU4MapPainter.exe
+C:\Users\caduv\source\repos\EU4MapPainter\EU4MapPainter\obj\Debug\EU4MapPainter.pdb
+C:\Users\caduv\source\repos\EU4MapPainter\EU4MapPainter\obj\Debug\EU4MapPainter.frPathSelectionScreen.resources
+C:\Users\caduv\source\repos\EU4MapPainter\EU4MapPainter\obj\Debug\EU4MapPainter.frMainScreen.resources
+C:\Users\caduv\source\repos\EU4MapPainter\EU4MapPainter\obj\Debug\EU4MapPainter.frHelp.resources
+C:\Users\caduv\source\repos\EU4MapPainter\EU4MapPainter\obj\Debug\EU4MapPainter.frSettings.resources
