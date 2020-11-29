@@ -10,9 +10,9 @@ namespace EU4MapPainter
     {
         //path selection
         public static string originalPath, modPath, mapURL;
-        public static string[,] definitionData = new string[0,5];
-        public static string[,] provincesData = new string[0, 4];
-        public static string[] provinceFilesList = new string[0];
+        public static string[,] definitionData;
+        //public static string[,] provincesData; [WIP]
+        public static string[] provinceFilesList, seaAndLakeStarts, wastelandIDs;
         public static Boolean canUsePoliticalMap = true, canCopyData = true;
         //settings
         public static Boolean originalCulture = false, originalReligion = false, originalHRE = false,
