@@ -32,9 +32,9 @@ namespace EU4MapPainter
             //now, it goes to definitions.csv and tries to find the respective "color coordinates"
             Boolean foundProvince = false;
             string provinceID = "";
-            for(int i = 0; i < SharedContent.definitionData.GetLength(0); i++)
+            for (int i = 0; i < SharedContent.definitionData.GetLength(0); i++)
             {
-                if(SharedContent.definitionData[i, 1] == pixel.R.ToString() &&
+                if (SharedContent.definitionData[i, 1] == pixel.R.ToString() &&
                    SharedContent.definitionData[i, 2] == pixel.G.ToString() &&
                    SharedContent.definitionData[i, 3] == pixel.B.ToString())
                 {
@@ -42,9 +42,22 @@ namespace EU4MapPainter
                     provinceID = SharedContent.definitionData[i, 0];
                 }
             }
+
             //if the province was found
             if(foundProvince)
             {
+                //checks if sea or lake
+                if (SharedContent.seaAndLakeStarts.Contains(provinceID))
+                {
+                    MessageBox.Show("You can't paint seas or lakes.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                //checks if wasteland
+                if (SharedContent.wastelandIDs.Contains(provinceID))
+                {
+                    MessageBox.Show("You can't paint wastelands.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
                 //it's data is going to be "created"
                 string content = txtScript.Text;
                 if (SharedContent.usingOriginalFiles)
@@ -57,6 +70,10 @@ namespace EU4MapPainter
                     content += "\nbase_manpower = " + (new Random()).Next(SharedContent.bmFromValue, SharedContent.bmToValue + 1);
                 //and saved in a file
                 File.WriteAllText("provinces/" + provinceID + ".txt", content);
+            }
+            else
+            {
+                MessageBox.Show("Province ID could not be found. Please, check your definition.csv file and restart the program.", "Something went wrong", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -80,7 +97,6 @@ namespace EU4MapPainter
                     provinceID = SharedContent.definitionData[i, 0];
                 }
             }
-
             if (eCurrent.Button == MouseButtons.Right && File.Exists("provinces/" + provinceID + ".txt"))
             {
                 File.Delete("provinces/" + provinceID + ".txt");
@@ -90,6 +106,18 @@ namespace EU4MapPainter
                 //if the province was found
                 if (foundProvince)
                 {
+                    //checks if sea or lake
+                    if (SharedContent.seaAndLakeStarts.Contains(provinceID))
+                    {
+                        MessageBox.Show("You can't paint seas or lakes.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+                    //checks if wasteland
+                    if (SharedContent.wastelandIDs.Contains(provinceID))
+                    {
+                        MessageBox.Show("You can't paint wastelands.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
                     //it's data is going to be "created"
                     string content = txtScript.Text;
                     if (SharedContent.usingOriginalFiles)
@@ -103,6 +131,10 @@ namespace EU4MapPainter
                     //and saved in a file
                     File.WriteAllText("provinces/" + provinceID + ".txt", content);
                 }
+                else
+                {
+                    MessageBox.Show("Province ID could not be found. Please, check your definition.csv file and restart the program.", "Something went wrong", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -111,7 +143,7 @@ namespace EU4MapPainter
             content += "\n";
             for (int i = 0; i < SharedContent.provinceFilesList.Length; i++)
             {
-                string currentProvince = Path.GetFileName(SharedContent.provinceFilesList[i]), extraContent = "";
+                string currentProvince = Path.GetFileName(SharedContent.provinceFilesList[i]);
                 int maxLength = currentProvince.IndexOf(" ");
                 //checks only the ID part of the name. Some mods use the format "ID.txt" instead of the
                 //default "ID - province name.txt", so this must be done
@@ -175,7 +207,11 @@ namespace EU4MapPainter
 
         private void frMainScreen_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Directory.Delete("provinces", true);
+            DialogResult result = MessageBox.Show("Are you sure you want to quit? Unsaved progress will be lost.", "Exit", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+            if (result == DialogResult.Yes)
+                Directory.Delete("provinces", true);
+            else
+                e.Cancel = true;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

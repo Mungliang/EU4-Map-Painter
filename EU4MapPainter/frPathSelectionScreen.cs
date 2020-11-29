@@ -50,25 +50,26 @@ namespace EU4MapPainter
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            Text = "EU4 Map Painter 1.0 - Checking paths";
+            Text = "EU4 Map Painter 1.1 - Checking paths";
+            Boolean defaultMapExists = true, climateTxtExists = true;
             //checks if paths are valid
             if (Directory.Exists(txtGamePath.Text.Trim() + "/map"))
             {
-                if(!File.Exists(txtGamePath.Text.Trim() + "/map/definition.csv"))
+                if (!File.Exists(txtGamePath.Text.Trim() + "/map/definition.csv"))
                 {
                     MessageBox.Show("Could not find definition.csv file on specified folder. Please, insert a valid path.", "Missing definition.csv", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Text = "EU4 Map Painter - Select paths";
                     return;
                 }
-                if(!File.Exists(txtGamePath.Text.Trim() + "/map/provinces.bmp"))
+                if (!File.Exists(txtGamePath.Text.Trim() + "/map/provinces.bmp"))
                 {
                     MessageBox.Show("Could not find provinces.bmp file on specified folder. Please, insert a valid path.", "Missing provinces.bmp", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Text = "EU4 Map Painter - Select paths";
                     return;
                 }
-                if(!Directory.Exists(txtGamePath.Text.Trim() + "/history/provinces"))
+                if (!Directory.Exists(txtGamePath.Text.Trim() + "/history/provinces"))
                 {
-                    DialogResult result = MessageBox.Show("Could not find history/provinces folder. Copying data will be impossible. Are you sure you want to proceed?", "Missing history/provinces", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    DialogResult result = MessageBox.Show("Could not find history/provinces folder. Copying data will not be possible. Are you sure you want to proceed?", "Missing history/provinces", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (result == DialogResult.No)
                         return;
                     else
@@ -77,9 +78,26 @@ namespace EU4MapPainter
                         SharedContent.canCopyData = false;
                     }
                 }
+                if (!File.Exists(txtGamePath.Text.Trim() + "/map/default.map"))
+                {
+                    DialogResult result = MessageBox.Show("File default.map is missing. It will not be possible do read which provinces are sea tiles or lakes. Do you wish to continue anyway?", "Missing default.map", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (result == DialogResult.No)
+                        return;
+                    else
+                        defaultMapExists = false;
+                }
+                if (!File.Exists(txtGamePath.Text.Trim() + "/map/climate.txt"))
+                {
+                    DialogResult result = MessageBox.Show("File climate.txt is missing. It will not be possible do read which provinces are wastelands. Do you wish to continue anyway?", "Missing climate.txt", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (result == DialogResult.No)
+                        return;
+                    else
+                        climateTxtExists = false;
+                }
+                /* [WORK IN PROGRESS]
                 if (!Directory.Exists(txtGamePath.Text.Trim() + "/common/countries"))
                 {
-                    DialogResult result = MessageBox.Show("Could not find common/countries folder. Copying data will be impossible. Are you sure you want to proceed?", "Missing common/countries", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    DialogResult result = MessageBox.Show("Could not find common/countries folder. Copying data will not be possible. Are you sure you want to proceed?", "Missing common/countries", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (result == DialogResult.No)
                         return;
                     else
@@ -87,12 +105,13 @@ namespace EU4MapPainter
                 }
                 if (!Directory.Exists(txtGamePath.Text.Trim() + "/common/country_tags"))
                 {
-                    DialogResult result = MessageBox.Show("Could not find common/country_tags folder. Copying data will be impossible. Are you sure you want to proceed?", "Missing common/country_tags", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    DialogResult result = MessageBox.Show("Could not find common/country_tags folder. Copying data will not be possible. Are you sure you want to proceed?", "Missing common/country_tags", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (result == DialogResult.No)
                         return;
                     else
                         SharedContent.canUsePoliticalMap = false;
                 }
+                */
             }
             else
             {
@@ -100,15 +119,15 @@ namespace EU4MapPainter
                 return;
             }
 
-            if(!Directory.Exists(txtModPath.Text))
+            if (!Directory.Exists(txtModPath.Text))
             {
                 MessageBox.Show("Mod path is invalid.", "No mod folder", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             //creates provinces directory
-            Text = "EU4 Map Painter 1.0 - Creating provinces directory";
-            if(!Directory.Exists("provinces"))
+            Text = "EU4 Map Painter 1.1 - Creating provinces directory";
+            if (!Directory.Exists("provinces"))
             {
                 Directory.CreateDirectory("provinces");
             }
@@ -121,32 +140,87 @@ namespace EU4MapPainter
             SharedContent.mapURL = txtGamePath.Text.Trim() + "/map/provinces.bmp";
 
             //loads definition file
-            Text = "EU4 Map Painter 1.0 - Loading definition.csv";
+            Text = "EU4 Map Painter 1.1 - Loading definition.csv";
             LoadsDefinitions(File.ReadAllLines(txtGamePath.Text.Trim() + "/map/definition.csv"));
 
             //reads all history/provinces files
-            Text = "EU4 Map Painter 1.0 - Loading provinces";
+            Text = "EU4 Map Painter 1.1 - Loading provinces";
             SharedContent.provinceFilesList = Directory.GetFiles(txtGamePath.Text + "/history/provinces");
-            if(Directory.Exists(txtModPath.Text.Trim() + "/history/provinces"))
+            if (Directory.Exists(txtModPath.Text.Trim() + "/history/provinces"))
             {
                 string[] modProvinces = Directory.GetFiles(txtModPath.Text.Trim() + "/history/provinces/");
-                for(int i = 0; i < modProvinces.Length; i++)
+                for (int i = 0; i < modProvinces.Length; i++)
                 {
                     File.Copy(modProvinces[i], "provinces");
                 }
             }
 
+            //checks which provinces are sea starts
+            if (defaultMapExists)
+            {
+                Text = "EU4 Map Painter 1.1 - Reading sea starts and lakes";
+                string[] mapFile = File.ReadAllLines(txtGamePath.Text + "/map/default.map");
+                Boolean foundSeaStarts = false, foundLakes = false;
+                string seaAndLakeProvincesTemp = "";
+                for (int i = 0; i < mapFile.Length; i++)
+                {
+                    if (foundSeaStarts)
+                    {
+                        if (mapFile[i].Contains('}'))
+                            foundSeaStarts = false;
+                        seaAndLakeProvincesTemp += mapFile[i].Trim().Replace("\t", " ") + " ";
+                    }
+                    else if (mapFile[i].Contains("sea_starts"))
+                        foundSeaStarts = true;
+
+                    if (foundLakes)
+                    {
+                        if (mapFile[i].Contains('}'))
+                            foundLakes = false;
+                        seaAndLakeProvincesTemp += mapFile[i].Trim().Replace("\t", " ") + " ";
+                    }
+                    else if (mapFile[i].Contains("lakes"))
+                        foundLakes = true;
+                }
+                SharedContent.seaAndLakeStarts = seaAndLakeProvincesTemp.Trim().Split(' ');
+            }
+            else
+                SharedContent.seaAndLakeStarts = new string[1];
+
+            //checks which provinces are wastelands
+            if (climateTxtExists)
+            {
+                Text = "EU4 Map Painter 1.1 - Reading wastelands";
+                string[] climateFile = File.ReadAllLines(txtGamePath.Text + "/map/climate.txt");
+                Boolean foundImpassableTerrain = false;
+                string impassableProvincesTemp = "";
+                for (int i = 0; i < climateFile.Length; i++)
+                {
+                    if (foundImpassableTerrain)
+                    {
+                        if (climateFile[i].Contains('}'))
+                            foundImpassableTerrain = false;
+                        impassableProvincesTemp += climateFile[i].Trim().Replace("\t", " ") + " ";
+                    }
+                    else if (climateFile[i].Contains("impassable"))
+                        foundImpassableTerrain = true;
+                }
+                SharedContent.wastelandIDs = impassableProvincesTemp.Trim().Split(' ');
+            }
+            else
+                SharedContent.wastelandIDs = new string[1];
+
             /*generates political map [WORK IN PROGRESS]
             if(SharedContent.canUsePoliticalMap)
             {
-                Text = "EU4 Map Painter 1.0 - Generating political map";
+                Text = "EU4 Map Painter 1.1 - Generating political map";
                 GeneratesPoliticalMap(txtGamePath.Text.Trim());
             }
             */
 
-            Text = "EU4 Map Painter 1.0 - Initializing";
+            Text = "EU4 Map Painter 1.1 - Initializing";
             Hide();
-            (new frMainScreen()).ShowDialog();
+            new frMainScreen().ShowDialog();
             Close();
         }
 

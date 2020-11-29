@@ -45,7 +45,7 @@
             this.btnHelp.Location = new System.Drawing.Point(12, 12);
             this.btnHelp.Name = "btnHelp";
             this.btnHelp.Size = new System.Drawing.Size(244, 36);
-            this.btnHelp.TabIndex = 2;
+            this.btnHelp.TabIndex = 1;
             this.btnHelp.Text = "Help";
             this.btnHelp.UseVisualStyleBackColor = true;
             this.btnHelp.Click += new System.EventHandler(this.btnHelp_Click);
@@ -78,7 +78,7 @@
             this.btnClear.Location = new System.Drawing.Point(12, 553);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(244, 36);
-            this.btnClear.TabIndex = 7;
+            this.btnClear.TabIndex = 2;
             this.btnClear.Text = "Clear";
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
@@ -91,6 +91,7 @@
             this.txtScript.Name = "txtScript";
             this.txtScript.Size = new System.Drawing.Size(243, 492);
             this.txtScript.TabIndex = 8;
+            this.txtScript.TabStop = false;
             this.txtScript.Text = resources.GetString("txtScript.Text");
             // 
             // btnSettings
@@ -98,7 +99,7 @@
             this.btnSettings.Location = new System.Drawing.Point(12, 595);
             this.btnSettings.Name = "btnSettings";
             this.btnSettings.Size = new System.Drawing.Size(244, 36);
-            this.btnSettings.TabIndex = 9;
+            this.btnSettings.TabIndex = 3;
             this.btnSettings.Text = "Settings";
             this.btnSettings.UseVisualStyleBackColor = true;
             this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
@@ -108,7 +109,7 @@
             this.btnSave.Location = new System.Drawing.Point(12, 637);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(244, 36);
-            this.btnSave.TabIndex = 10;
+            this.btnSave.TabIndex = 4;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -128,7 +129,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frMainScreen";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "EU4 Map Painter 1.0";
+            this.Text = "EU4 Map Painter 1.1";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frMainScreen_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).EndInit();
