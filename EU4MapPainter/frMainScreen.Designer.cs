@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frMainScreen));
             this.btnHelp = new System.Windows.Forms.Button();
             this.picMap = new System.Windows.Forms.PictureBox();
@@ -36,6 +37,8 @@
             this.txtScript = new System.Windows.Forms.TextBox();
             this.btnSettings = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
+            this.ttProvNames = new System.Windows.Forms.ToolTip(this.components);
+            this.lblProvName = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
             this.panelMap.SuspendLayout();
             this.SuspendLayout();
@@ -59,6 +62,7 @@
             this.picMap.TabStop = false;
             this.picMap.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseClick);
             this.picMap.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseDoubleClick);
+            this.picMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseMove);
             // 
             // panelMap
             // 
@@ -70,7 +74,7 @@
             this.panelMap.Controls.Add(this.picMap);
             this.panelMap.Location = new System.Drawing.Point(262, 13);
             this.panelMap.Name = "panelMap";
-            this.panelMap.Size = new System.Drawing.Size(528, 660);
+            this.panelMap.Size = new System.Drawing.Size(528, 721);
             this.panelMap.TabIndex = 6;
             // 
             // btnClear
@@ -114,12 +118,28 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // ttProvNames
+            // 
+            this.ttProvNames.AutoPopDelay = 1000;
+            this.ttProvNames.InitialDelay = 500;
+            this.ttProvNames.ReshowDelay = 100;
+            // 
+            // lblProvName
+            // 
+            this.lblProvName.AutoSize = true;
+            this.lblProvName.Location = new System.Drawing.Point(12, 676);
+            this.lblProvName.Name = "lblProvName";
+            this.lblProvName.Size = new System.Drawing.Size(147, 34);
+            this.lblProvName.TabIndex = 9;
+            this.lblProvName.Text = "Name: Province name\r\nID: Province ID";
+            // 
             // frMainScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.AppWorkspace;
-            this.ClientSize = new System.Drawing.Size(802, 685);
+            this.ClientSize = new System.Drawing.Size(802, 746);
+            this.Controls.Add(this.lblProvName);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.txtScript);
@@ -129,7 +149,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frMainScreen";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "EU4 Map Painter 1.1";
+            this.Text = "EU4 Map Painter 1.2";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frMainScreen_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).EndInit();
@@ -147,5 +167,7 @@
         private System.Windows.Forms.TextBox txtScript;
         private System.Windows.Forms.Button btnSettings;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.ToolTip ttProvNames;
+        private System.Windows.Forms.Label lblProvName;
     }
 }
