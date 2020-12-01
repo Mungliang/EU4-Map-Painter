@@ -17,16 +17,17 @@ namespace EU4MapPainter
         {
             InitializeComponent();
             Select();
-            picMap.Image = Image.FromFile(SharedContent.mapURL);
+            picMap.Image = SharedContent.baseMap;
             picMap.Width = picMap.Image.Width;
             picMap.Height = picMap.Image.Height;
         }
+
+        public Bitmap bitmap = new Bitmap(SharedContent.baseMap);
 
         private void picMap_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             //checks what is the color of the pixel the user clicked on
             MouseEventArgs eCurrent = (MouseEventArgs)e;
-            Bitmap bitmap = new Bitmap(picMap.Image);
             Color pixel = bitmap.GetPixel(eCurrent.X, eCurrent.Y);
 
             //now, it goes to definitions.csv and tries to find the respective "color coordinates"
@@ -81,7 +82,6 @@ namespace EU4MapPainter
         {
             //checks what is the color of the pixel the user clicked on
             MouseEventArgs eCurrent = e;
-            Bitmap bitmap = new Bitmap(picMap.Image);
             Color pixel = bitmap.GetPixel(eCurrent.X, eCurrent.Y);
 
             //now, it goes to definitions.csv and tries to find the respective "color coordinates"
@@ -95,6 +95,7 @@ namespace EU4MapPainter
                 {
                     foundProvince = true;
                     provinceID = SharedContent.definitionData[i, 0];
+                    break;
                 }
             }
             if (eCurrent.Button == MouseButtons.Right && File.Exists("provinces/" + provinceID + ".txt"))
@@ -118,6 +119,21 @@ namespace EU4MapPainter
                         MessageBox.Show("You can't paint wastelands.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
+                    //gets original file name
+                    string provinceName = provinceID + ".txt";
+                    for(int i = 0; i < SharedContent.provinceFilesList.Length; i++)
+                    {
+                        string currentProvince = Path.GetFileName(SharedContent.provinceFilesList[i]);
+                        //checks only the ID part of the name. Some mods use the format "ID.txt" instead of the
+                        //default "ID - province name.txt", so this must be done
+                        if (currentProvince.Split('-')[0].Trim() == provinceID || currentProvince.Split(' ')[0].Trim() == provinceID ||
+                           currentProvince.Split('.')[0].Trim() == provinceID)
+                        {
+                            provinceName = currentProvince;
+                            break;
+                        }
+                    }
+
                     //it's data is going to be "created"
                     string content = txtScript.Text;
                     if (SharedContent.usingOriginalFiles)
@@ -129,7 +145,7 @@ namespace EU4MapPainter
                     if(SharedContent.bmChoice == 2)
                         content += "\nbase_manpower = " + (new Random()).Next(SharedContent.bmFromValue, SharedContent.bmToValue + 1);
                     //and saved in a file
-                    File.WriteAllText("provinces/" + provinceID + ".txt", content);
+                    File.WriteAllText("provinces/" + provinceName, content, Encoding.Default);
                 }
                 else
                 {
@@ -144,11 +160,10 @@ namespace EU4MapPainter
             for (int i = 0; i < SharedContent.provinceFilesList.Length; i++)
             {
                 string currentProvince = Path.GetFileName(SharedContent.provinceFilesList[i]);
-                int maxLength = currentProvince.IndexOf(" ");
                 //checks only the ID part of the name. Some mods use the format "ID.txt" instead of the
                 //default "ID - province name.txt", so this must be done
-                if((maxLength != -1 && currentProvince.Substring(0, maxLength) == provinceID) || 
-                    currentProvince == provinceID + ".txt")
+                if(currentProvince.Split('-')[0].Trim() == provinceID || currentProvince.Split(' ')[0].Trim() == provinceID ||
+                   currentProvince.Split('.')[0].Trim() == provinceID)
                 {
                     if (SharedContent.originalCulture)
                         content += TakeOriginalData(File.ReadAllLines(SharedContent.provinceFilesList[i]), "culture =");
@@ -159,7 +174,7 @@ namespace EU4MapPainter
                     if (SharedContent.originalTradeGood)
                         content += TakeOriginalData(File.ReadAllLines(SharedContent.provinceFilesList[i]), "trade_goods =");
                     if (SharedContent.originalCapital)
-                        content += TakeOriginalData(File.ReadAllLines(SharedContent.provinceFilesList[i]), "capital =");
+                        content += TakeOriginalData(File.ReadAllLines(SharedContent.provinceFilesList[i], Encoding.GetEncoding("iso-8859-1")), "capital =");
                     if (SharedContent.originalExtraCost)
                         content += TakeOriginalData(File.ReadAllLines(SharedContent.provinceFilesList[i]), "extra_cost =");
                     if (SharedContent.originalCoT)
@@ -217,11 +232,31 @@ namespace EU4MapPainter
         private void btnSave_Click(object sender, EventArgs e)
         {
             string[] provinceFiles = Directory.GetFiles("provinces");
-            for(int i = 0; i < provinceFiles.Length; i++)
+            for (int i = 0; i < provinceFiles.Length; i++)
             {
-                File.Copy(provinceFiles[i], SharedContent.modPath + "/history/provinces/" + Path.GetFileName(provinceFiles[i]));
+                File.Copy(provinceFiles[i], SharedContent.modPath + "/history/provinces/" + Path.GetFileName(provinceFiles[i]), true);
             }
 
+        }
+
+        private void picMap_MouseMove(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs eCurrent = e;
+            Color pixel = bitmap.GetPixel(eCurrent.X, eCurrent.Y);
+            //now, it goes to definitions.csv and tries to find the respective "color coordinates"
+            string provinceID = "", provinceName = "";
+            for (int i = 0; i < SharedContent.definitionData.GetLength(0); i++)
+            {
+                if (SharedContent.definitionData[i, 1] == pixel.R.ToString() &&
+                   SharedContent.definitionData[i, 2] == pixel.G.ToString() &&
+                   SharedContent.definitionData[i, 3] == pixel.B.ToString())
+                {
+                    provinceID = SharedContent.definitionData[i, 0];
+                    provinceName = SharedContent.definitionData[i, 4];
+                    break;
+                }
+            }
+            lblProvName.Text = "Name: " + provinceName + "\nID: " + provinceID;
         }
     }
 }

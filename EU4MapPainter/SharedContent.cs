@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace EU4MapPainter
 {
     class SharedContent
     {
         //path selection
-        public static string originalPath, modPath, mapURL;
+        public static string originalPath, modPath;
+        public static Image baseMap;
         public static string[,] definitionData;
         //public static string[,] provincesData; [WIP]
         public static string[] provinceFilesList, seaAndLakeStarts, wastelandIDs;

@@ -125,6 +125,11 @@ namespace EU4MapPainter
                 return;
             }
 
+            if(!Directory.Exists(txtModPath.Text + "/history/provinces"))
+            {
+                Directory.CreateDirectory(txtModPath.Text + "/history/provinces");
+            }
+
             //creates provinces directory
             Text = "EU4 Map Painter 1.1 - Creating provinces directory";
             if (!Directory.Exists("provinces"))
@@ -137,52 +142,29 @@ namespace EU4MapPainter
             File.WriteAllText("paths.txt", content);
             SharedContent.originalPath = txtGamePath.Text;
             SharedContent.modPath = txtModPath.Text;
-            SharedContent.mapURL = txtGamePath.Text.Trim() + "/map/provinces.bmp";
+            SharedContent.baseMap = Image.FromFile(txtGamePath.Text.Trim() + "/map/provinces.bmp");
 
             //loads definition file
-            Text = "EU4 Map Painter 1.1 - Loading definition.csv";
-            LoadsDefinitions(File.ReadAllLines(txtGamePath.Text.Trim() + "/map/definition.csv"));
+            Text = "EU4 Map Painter 1.2 - Loading definition.csv";
+            LoadDefinitions(File.ReadAllLines(txtGamePath.Text.Trim() + "/map/definition.csv", Encoding.GetEncoding("iso-8859-1")));
 
             //reads all history/provinces files
-            Text = "EU4 Map Painter 1.1 - Loading provinces";
+            Text = "EU4 Map Painter 1.2 - Loading provinces";
             SharedContent.provinceFilesList = Directory.GetFiles(txtGamePath.Text + "/history/provinces");
             if (Directory.Exists(txtModPath.Text.Trim() + "/history/provinces"))
             {
                 string[] modProvinces = Directory.GetFiles(txtModPath.Text.Trim() + "/history/provinces/");
                 for (int i = 0; i < modProvinces.Length; i++)
                 {
-                    File.Copy(modProvinces[i], "provinces");
+                    File.Copy(modProvinces[i], "provinces/" + Path.GetFileName(modProvinces[i]), true);
                 }
             }
 
             //checks which provinces are sea starts
             if (defaultMapExists)
             {
-                Text = "EU4 Map Painter 1.1 - Reading sea starts and lakes";
-                string[] mapFile = File.ReadAllLines(txtGamePath.Text + "/map/default.map");
-                Boolean foundSeaStarts = false, foundLakes = false;
-                string seaAndLakeProvincesTemp = "";
-                for (int i = 0; i < mapFile.Length; i++)
-                {
-                    if (foundSeaStarts)
-                    {
-                        if (mapFile[i].Contains('}'))
-                            foundSeaStarts = false;
-                        seaAndLakeProvincesTemp += mapFile[i].Trim().Replace("\t", " ") + " ";
-                    }
-                    else if (mapFile[i].Contains("sea_starts"))
-                        foundSeaStarts = true;
-
-                    if (foundLakes)
-                    {
-                        if (mapFile[i].Contains('}'))
-                            foundLakes = false;
-                        seaAndLakeProvincesTemp += mapFile[i].Trim().Replace("\t", " ") + " ";
-                    }
-                    else if (mapFile[i].Contains("lakes"))
-                        foundLakes = true;
-                }
-                SharedContent.seaAndLakeStarts = seaAndLakeProvincesTemp.Trim().Split(' ');
+                Text = "EU4 Map Painter 1.2 - Reading sea starts and lakes";
+                FindSeasAndLakes(File.ReadAllLines(txtGamePath.Text + "/map/default.map"));
             }
             else
                 SharedContent.seaAndLakeStarts = new string[1];
@@ -190,26 +172,11 @@ namespace EU4MapPainter
             //checks which provinces are wastelands
             if (climateTxtExists)
             {
-                Text = "EU4 Map Painter 1.1 - Reading wastelands";
-                string[] climateFile = File.ReadAllLines(txtGamePath.Text + "/map/climate.txt");
-                Boolean foundImpassableTerrain = false;
-                string impassableProvincesTemp = "";
-                for (int i = 0; i < climateFile.Length; i++)
-                {
-                    if (foundImpassableTerrain)
-                    {
-                        if (climateFile[i].Contains('}'))
-                            foundImpassableTerrain = false;
-                        impassableProvincesTemp += climateFile[i].Trim().Replace("\t", " ") + " ";
-                    }
-                    else if (climateFile[i].Contains("impassable"))
-                        foundImpassableTerrain = true;
-                }
-                SharedContent.wastelandIDs = impassableProvincesTemp.Trim().Split(' ');
+                Text = "EU4 Map Painter 1.2 - Reading wastelands";
+                FindWasteLand(File.ReadAllLines(txtGamePath.Text + "/map/climate.txt"));
             }
             else
                 SharedContent.wastelandIDs = new string[1];
-
             /*generates political map [WORK IN PROGRESS]
             if(SharedContent.canUsePoliticalMap)
             {
@@ -218,30 +185,76 @@ namespace EU4MapPainter
             }
             */
 
-            Text = "EU4 Map Painter 1.1 - Initializing";
+            Text = "EU4 Map Painter 1.2 - Initializing";
             Hide();
             new frMainScreen().ShowDialog();
             Close();
         }
 
-        public static void LoadsDefinitions(string[] definitionFile)
+        public static void LoadDefinitions(string[] definitionFile)
         {
             SharedContent.definitionData = new string[definitionFile.Length, 5];
             for (int i = 0; i < definitionFile.Length; i++)
             {
                 try
                 {
-                    SharedContent.definitionData[i, 0] = definitionFile[i].Split(';')[0];
-                    SharedContent.definitionData[i, 1] = definitionFile[i].Split(';')[1];
-                    SharedContent.definitionData[i, 2] = definitionFile[i].Split(';')[2];
-                    SharedContent.definitionData[i, 3] = definitionFile[i].Split(';')[3];
-                    SharedContent.definitionData[i, 4] = definitionFile[i].Split(';')[4];
+                    SharedContent.definitionData[i, 0] = definitionFile[i].Split(';')[0]; //ID
+                    SharedContent.definitionData[i, 1] = definitionFile[i].Split(';')[1]; //Red
+                    SharedContent.definitionData[i, 2] = definitionFile[i].Split(';')[2]; //Green
+                    SharedContent.definitionData[i, 3] = definitionFile[i].Split(';')[3]; //Blue
+                    SharedContent.definitionData[i, 4] = ""; //name (if doesnt exist)
+                    SharedContent.definitionData[i, 4] += definitionFile[i].Split(';')[4]; //name (if exists)
                 }
                 catch
                 {
                     continue;
                 }
             }
+        }
+
+        public static void FindWasteLand(string[] climateFile)
+        {
+            Boolean foundImpassableTerrain = false;
+            string impassableProvincesTemp = "";
+            for (int i = 0; i < climateFile.Length; i++)
+            {
+                if (foundImpassableTerrain)
+                {
+                    if (climateFile[i].Contains('}'))
+                        foundImpassableTerrain = false;
+                    impassableProvincesTemp += climateFile[i].Trim().Replace("\t", " ") + " ";
+                }
+                else if (climateFile[i].Contains("impassable"))
+                    foundImpassableTerrain = true;
+            }
+            SharedContent.wastelandIDs = impassableProvincesTemp.Trim().Split(' ');
+        }
+
+        public static void FindSeasAndLakes(string[] mapFile)
+        {
+            Boolean foundSeaStarts = false, foundLakes = false;
+            string seaAndLakeProvincesTemp = "";
+            for (int i = 0; i < mapFile.Length; i++)
+            {
+                if (foundSeaStarts)
+                {
+                    if (mapFile[i].Contains('}'))
+                        foundSeaStarts = false;
+                    seaAndLakeProvincesTemp += mapFile[i].Trim().Replace("\t", " ") + " ";
+                }
+                else if (mapFile[i].Contains("sea_starts"))
+                    foundSeaStarts = true;
+
+                if (foundLakes)
+                {
+                    if (mapFile[i].Contains('}'))
+                        foundLakes = false;
+                    seaAndLakeProvincesTemp += mapFile[i].Trim().Replace("\t", " ") + " ";
+                }
+                else if (mapFile[i].Contains("lakes"))
+                    foundLakes = true;
+            }
+            SharedContent.seaAndLakeStarts = seaAndLakeProvincesTemp.Trim().Split(' ');
         }
 
         /* [WORK IN PROGRESS]
