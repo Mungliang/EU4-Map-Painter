@@ -111,7 +111,7 @@
             this.MaximizeBox = false;
             this.Name = "frPathSelectionScreen";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "EU4 Map Painter 1.2 - Select paths";
+            this.Text = "EU4 Map Painter " + SharedContent.version + " - Select paths";
             this.ResumeLayout(false);
             this.PerformLayout();
 

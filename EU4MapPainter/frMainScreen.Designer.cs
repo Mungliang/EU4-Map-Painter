@@ -149,7 +149,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frMainScreen";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "EU4 Map Painter 1.2";
+            this.Text = "EU4 Map Painter " + SharedContent.version;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frMainScreen_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).EndInit();

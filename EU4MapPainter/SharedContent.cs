@@ -9,6 +9,8 @@ namespace EU4MapPainter
 {
     class SharedContent
     {
+        //general
+        public static string version = "1.3";
         //path selection
         public static string originalPath, modPath;
         public static Image baseMap;

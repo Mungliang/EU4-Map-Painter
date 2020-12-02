@@ -50,7 +50,7 @@ namespace EU4MapPainter
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            Text = "EU4 Map Painter 1.1 - Checking paths";
+            Text = "EU4 Map Painter " + SharedContent.version + " - Checking paths";
             Boolean defaultMapExists = true, climateTxtExists = true;
             //checks if paths are valid
             if (Directory.Exists(txtGamePath.Text.Trim() + "/map"))
@@ -58,13 +58,13 @@ namespace EU4MapPainter
                 if (!File.Exists(txtGamePath.Text.Trim() + "/map/definition.csv"))
                 {
                     MessageBox.Show("Could not find definition.csv file on specified folder. Please, insert a valid path.", "Missing definition.csv", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Text = "EU4 Map Painter - Select paths";
+                    Text = "EU4 Map Painter " + SharedContent.version + " - Select paths";
                     return;
                 }
                 if (!File.Exists(txtGamePath.Text.Trim() + "/map/provinces.bmp"))
                 {
                     MessageBox.Show("Could not find provinces.bmp file on specified folder. Please, insert a valid path.", "Missing provinces.bmp", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    Text = "EU4 Map Painter - Select paths";
+                    Text = "EU4 Map Painter " + SharedContent.version + " - Select paths";
                     return;
                 }
                 if (!Directory.Exists(txtGamePath.Text.Trim() + "/history/provinces"))
@@ -131,7 +131,7 @@ namespace EU4MapPainter
             }
 
             //creates provinces directory
-            Text = "EU4 Map Painter 1.1 - Creating provinces directory";
+            Text = "EU4 Map Painter " + SharedContent.version + " - Creating provinces directory";
             if (!Directory.Exists("provinces"))
             {
                 Directory.CreateDirectory("provinces");
@@ -145,11 +145,11 @@ namespace EU4MapPainter
             SharedContent.baseMap = Image.FromFile(txtGamePath.Text.Trim() + "/map/provinces.bmp");
 
             //loads definition file
-            Text = "EU4 Map Painter 1.2 - Loading definition.csv";
+            Text = "EU4 Map Painter " + SharedContent.version + " - Loading definition.csv";
             LoadDefinitions(File.ReadAllLines(txtGamePath.Text.Trim() + "/map/definition.csv", Encoding.GetEncoding("iso-8859-1")));
 
             //reads all history/provinces files
-            Text = "EU4 Map Painter 1.2 - Loading provinces";
+            Text = "EU4 Map Painter " + SharedContent.version + " - Loading provinces";
             SharedContent.provinceFilesList = Directory.GetFiles(txtGamePath.Text + "/history/provinces");
             if (Directory.Exists(txtModPath.Text.Trim() + "/history/provinces"))
             {
@@ -163,7 +163,7 @@ namespace EU4MapPainter
             //checks which provinces are sea starts
             if (defaultMapExists)
             {
-                Text = "EU4 Map Painter 1.2 - Reading sea starts and lakes";
+                Text = "EU4 Map Painter " + SharedContent.version + " - Reading sea starts and lakes";
                 FindSeasAndLakes(File.ReadAllLines(txtGamePath.Text + "/map/default.map"));
             }
             else
@@ -172,7 +172,7 @@ namespace EU4MapPainter
             //checks which provinces are wastelands
             if (climateTxtExists)
             {
-                Text = "EU4 Map Painter 1.2 - Reading wastelands";
+                Text = "EU4 Map Painter" + SharedContent.version + " - Reading wastelands";
                 FindWasteLand(File.ReadAllLines(txtGamePath.Text + "/map/climate.txt"));
             }
             else
@@ -185,7 +185,7 @@ namespace EU4MapPainter
             }
             */
 
-            Text = "EU4 Map Painter 1.2 - Initializing";
+            Text = "EU4 Map Painter " + SharedContent.version + " - Initializing";
             Hide();
             new frMainScreen().ShowDialog();
             Close();
