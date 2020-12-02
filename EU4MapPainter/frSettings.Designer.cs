@@ -447,6 +447,7 @@
             this.Controls.Add(this.gbBaseProduction);
             this.Controls.Add(this.gbBaseTax);
             this.Controls.Add(this.gbGeneral);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "frSettings";

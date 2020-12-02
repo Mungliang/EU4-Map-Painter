@@ -171,8 +171,6 @@ namespace EU4MapPainter
                         content += TakeOriginalData(File.ReadAllLines(SharedContent.provinceFilesList[i]), "religion =");
                     if (SharedContent.originalHRE)
                         content += TakeOriginalData(File.ReadAllLines(SharedContent.provinceFilesList[i]), "hre =");
-                    if (SharedContent.originalTradeGood)
-                        content += TakeOriginalData(File.ReadAllLines(SharedContent.provinceFilesList[i]), "trade_goods =");
                     if (SharedContent.originalCapital)
                         content += TakeOriginalData(File.ReadAllLines(SharedContent.provinceFilesList[i], Encoding.GetEncoding("iso-8859-1")), "capital =");
                     if (SharedContent.originalExtraCost)
@@ -185,6 +183,8 @@ namespace EU4MapPainter
                         content += TakeOriginalData(File.ReadAllLines(SharedContent.provinceFilesList[i]), "base_production =");
                     if (SharedContent.bmChoice == 1)
                         content += TakeOriginalData(File.ReadAllLines(SharedContent.provinceFilesList[i]), "base_manpower =");
+                    if (SharedContent.originalTradeGood)
+                        content += TakeOriginalData(File.ReadAllLines(SharedContent.provinceFilesList[i]), "trade_goods =");
                 }
             }
 
@@ -194,12 +194,35 @@ namespace EU4MapPainter
         private static string TakeOriginalData(string[] currentFile, string searchTerm)
         {
             string extraContent = "";
-            for(int i = 0; i < currentFile.Length; i++)
+            if(!(searchTerm == "trade_goods ="))
             {
-                if (currentFile[i].Contains(searchTerm))
+                for (int i = 0; i < currentFile.Length; i++)
                 {
-                    extraContent += currentFile[i].Trim() + "\n";
-                    break;
+                    if (currentFile[i].Contains(searchTerm))
+                    {
+                        extraContent += currentFile[i].Trim() + "\n";
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < currentFile.Length; i++)
+                {
+                    if (currentFile[i].Contains("trade_goods =") && !currentFile[i].Contains("latent_trade_goods ="))
+                    {
+                        extraContent += currentFile[i].Trim() + "\n";
+                        break;
+                    }
+                }
+
+                for (int i = 0; i < currentFile.Length; i++)
+                {
+                    if (currentFile[i].Contains("latent_trade_goods ="))
+                    {
+                        extraContent += currentFile[i].Trim() + "\n";
+                        break;
+                    }
                 }
             }
             return extraContent;
