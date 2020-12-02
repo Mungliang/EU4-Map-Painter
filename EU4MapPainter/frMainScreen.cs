@@ -220,11 +220,15 @@ namespace EU4MapPainter
                 {
                     if (currentFile[i].Contains("latent_trade_goods ="))
                     {
-                        for(int j = 0; j < currentFile.Length; j++)
+                        while(true)
                         {
-                            extraContent += currentFile[i].Trim() + "\n";
+                            extraContent += currentFile[i].Trim() + " ";
                             if (currentFile[i].Contains("}"))
+                            {
+                                extraContent += "\n";
                                 break;
+                            }
+                            i++;
                         }
                         break;
                     }
