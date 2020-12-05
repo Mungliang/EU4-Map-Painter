@@ -158,18 +158,32 @@ namespace EU4MapPainter
             //general tab
             if (cbCulture.Checked)
                 SharedContent.originalCulture = true;
+            else
+                SharedContent.originalCulture = false;
             if (cbReligion.Checked)
                 SharedContent.originalReligion = true;
+            else
+                SharedContent.originalReligion = false;
             if (cbHRE.Checked)
                 SharedContent.originalHRE = true;
+            else
+                SharedContent.originalHRE = false;
             if (cbTradeGood.Checked)
                 SharedContent.originalTradeGood = true;
+            else
+                SharedContent.originalTradeGood = false;
             if (cbCapitalName.Checked)
                 SharedContent.originalCapital = true;
+            else
+                SharedContent.originalCapital = false;
             if (cbExtraCost.Checked)
                 SharedContent.originalExtraCost = true;
+            else
+                SharedContent.originalExtraCost = false;
             if (cbCoT.Checked)
                 SharedContent.originalCoT = true;
+            else
+                SharedContent.originalCoT = false;
 
             //base tax tab
             if (rbScriptBT.Checked)

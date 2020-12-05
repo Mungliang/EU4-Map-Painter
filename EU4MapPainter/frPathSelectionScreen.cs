@@ -140,8 +140,8 @@ namespace EU4MapPainter
             string content = txtGamePath.Text + "\n" +
                              txtModPath.Text;
             File.WriteAllText("paths.txt", content);
-            SharedContent.originalPath = txtGamePath.Text;
-            SharedContent.modPath = txtModPath.Text;
+            SharedContent.originalPath = txtGamePath.Text.Trim();
+            SharedContent.modPath = txtModPath.Text.Trim();
             SharedContent.baseMap = Image.FromFile(txtGamePath.Text.Trim() + "/map/provinces.bmp");
 
             //loads definition file

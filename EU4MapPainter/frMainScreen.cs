@@ -45,7 +45,7 @@ namespace EU4MapPainter
             }
 
             //if the province was found
-            if(foundProvince)
+            if (foundProvince)
             {
                 //checks if sea or lake
                 if (SharedContent.seaAndLakeStarts.Contains(provinceID))
@@ -59,6 +59,21 @@ namespace EU4MapPainter
                     MessageBox.Show("You can't paint wastelands.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
+                //gets original file name
+                string provinceName = provinceID + ".txt";
+                for (int i = 0; i < SharedContent.provinceFilesList.Length; i++)
+                {
+                    string currentProvince = Path.GetFileName(SharedContent.provinceFilesList[i]);
+                    //checks only the ID part of the name. Some mods use the format "ID.txt" instead of the
+                    //default "ID - province name.txt", so this must be done
+                    if (currentProvince.Split('-')[0].Trim() == provinceID || currentProvince.Split(' ')[0].Trim() == provinceID ||
+                       currentProvince.Split('.')[0].Trim() == provinceID)
+                    {
+                        provinceName = currentProvince;
+                        break;
+                    }
+                }
+
                 //it's data is going to be "created"
                 string content = txtScript.Text;
                 if (SharedContent.usingOriginalFiles)
@@ -70,7 +85,7 @@ namespace EU4MapPainter
                 if (SharedContent.bmChoice == 2)
                     content += "\nbase_manpower = " + (new Random()).Next(SharedContent.bmFromValue, SharedContent.bmToValue + 1);
                 //and saved in a file
-                File.WriteAllText("provinces/" + provinceID + ".txt", content);
+                File.WriteAllText("provinces/" + provinceName, content, Encoding.Default);
             }
             else
             {
@@ -102,7 +117,7 @@ namespace EU4MapPainter
             {
                 File.Delete("provinces/" + provinceID + ".txt");
             }
-            else if (Control.ModifierKeys == Keys.Shift)
+            else if (Control.ModifierKeys == Keys.Control)
             {
                 //if the province was found
                 if (foundProvince)
@@ -134,6 +149,15 @@ namespace EU4MapPainter
                         }
                     }
 
+                    if (eCurrent.Button == MouseButtons.Right)
+                    {
+                        if (File.Exists("provinces/" + provinceName))
+                            txtScript.Text = File.ReadAllText("provinces/" + provinceName);
+                        else if(File.Exists(SharedContent.originalPath + "/history/provinces/" + provinceName))
+                            txtScript.Text = File.ReadAllText(SharedContent.originalPath + "/history/provinces/" + provinceName);
+                        return;
+                    }
+
                     //it's data is going to be "created"
                     string content = txtScript.Text;
                     if (SharedContent.usingOriginalFiles)
@@ -162,7 +186,8 @@ namespace EU4MapPainter
                 string currentProvince = Path.GetFileName(SharedContent.provinceFilesList[i]);
                 //checks only the ID part of the name. Some mods use the format "ID.txt" instead of the
                 //default "ID - province name.txt", so this must be done
-                if(currentProvince.Split('-')[0].Trim() == provinceID || currentProvince.Split(' ')[0].Trim() == provinceID ||
+                if(currentProvince.Split('-')[0].Trim() == provinceID || 
+                   currentProvince.Split(' ')[0].Trim() == provinceID ||
                    currentProvince.Split('.')[0].Trim() == provinceID)
                 {
                     if (SharedContent.originalCulture)
