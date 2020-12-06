@@ -55,7 +55,7 @@ namespace EU4MapPainter
 
         private void btnCommands_Click(object sender, EventArgs e)
         {
-            lblInstruction.Text = "Double click or click while holding shift to select a province and attribute data to it.\n" +
+            lblInstruction.Text = "Double click or click while holding control to select a province and attribute data to it.\n" +
                                   "Right click to remove the data attributed currently to said province.\n" +
                                   "\n" +
                                   "On Settings, you may choose to copy data from original province files (the ones in\n" +

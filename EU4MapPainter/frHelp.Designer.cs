@@ -43,7 +43,7 @@
             this.lblInstruction.ForeColor = System.Drawing.Color.White;
             this.lblInstruction.Location = new System.Drawing.Point(12, 9);
             this.lblInstruction.Name = "lblInstruction";
-            this.lblInstruction.Size = new System.Drawing.Size(636, 200);
+            this.lblInstruction.Size = new System.Drawing.Size(640, 200);
             this.lblInstruction.TabIndex = 0;
             this.lblInstruction.Text = resources.GetString("lblInstruction.Text");
             // 
